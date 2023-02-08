@@ -1,0 +1,9 @@
+{
+  "repo": "github.com/Kyuubang/philo-sample-case",
+  "auths": {
+    "github.com": {
+      "username": "Kyuubang",
+      "token": "ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    }
+  }
+}
