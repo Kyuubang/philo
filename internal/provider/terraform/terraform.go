@@ -1,5 +1,0 @@
-package terraform
-
-func TerraformInit() {
-
-}

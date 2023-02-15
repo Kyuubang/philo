@@ -23,6 +23,24 @@ type Labs struct {
 	Type string `json:"type"`
 }
 
+type CaseData struct {
+	Slug   string   `json:"slug"`
+	Spec   string   `json:"spec"`
+	Repo   string   `json:"repo"`
+	Start  []string `json:"start"`
+	Vars   Vars     `json:"vars"`
+	Grade  []Grade  `json:"grade"`
+	Finish []string `json:"finish"`
+}
+type Vars map[string]interface{}
+
+type Grade struct {
+	Name   string `json:"name"`
+	On     string `json:"on"`
+	Script string `json:"script"`
+	Expect string `json:"expect"`
+}
+
 func getBody(url string) (body []byte, httpCode int) {
 	// set context to cancel if timeout
 	ctx := context.Background()
@@ -63,7 +81,7 @@ func getBody(url string) (body []byte, httpCode int) {
 
 // GetCase GitHub file with specific url format
 // https://raw.githubusercontent.com /<repo>/<branch>/<slug>/case.yaml
-func GetCase(repo string, branch string, slug string) (result map[string]interface{}, httpCode int) {
+func GetCase(repo string, branch string, slug string) (result CaseData, httpCode int) {
 	course := strings.Split(slug, "-")[0]
 
 	pathUrl := path.Join(repo, branch, course, slug, "case.yaml")

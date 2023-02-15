@@ -3,15 +3,15 @@ package remote
 // TODO: Create a remote command executor that can be used to execute commands on a remote host.
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/Kyuubang/philo/internal/utils/bash"
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/agent"
 	"io/ioutil"
 	"net"
 	"os"
 	"strings"
-
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/agent"
 )
 
 type SSHClient struct {
@@ -59,39 +59,37 @@ func (client *SSHClient) newSession() (*ssh.Session, error) {
 	return session, nil
 }
 
-// RunCommand with output stdout and stderr
-// currently remote command just support output
-// with string type data
-func (client *SSHClient) RunCommand(cmd string, lab string) bash.Out {
-	//mainConfig, _ := config.InitConfig()
+// RunRemoteCommand on VM Participant
+func (client *SSHClient) RunRemoteCommand(command string) (bash.Out, error) {
 
-	session, err := client.newSession()
-	defer func() bash.Out {
-		msgErr := recover()
-		if msgErr != nil {
-			fmt.Println("unsuccessful run remote command")
-		}
-		return bash.Out{}
-	}()
-
+	var session, err = client.newSession()
 	if err != nil {
-		fmt.Println("Cant Create new session for remote command!")
-		panic("Cant Create new session for remote command!")
-	}
 
-	stdout, stderr := session.CombinedOutput(cmd)
-
-	if stderr != nil {
-		return bash.Out{
-			StdOut:   "",
-			StdErr:   strings.Replace(string(stdout), "\n", "", -1),
-			ExitCode: 1,
-		}
-	} else {
-		return bash.Out{
-			StdOut:   strings.Replace(string(stdout), "\n", "", -1),
-			StdErr:   "",
-			ExitCode: 0,
-		}
 	}
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	session.Stdout = &stdout
+	session.Stderr = &stderr
+
+	err = session.Run(command)
+	if err != nil {
+		exitErr, ok := err.(*ssh.ExitError)
+		if !ok {
+			return bash.Out{
+				StdOut:   strings.Replace(stdout.String(), "\n", "", -1),
+				StdErr:   strings.Replace(stderr.String(), "\n", "", -1),
+				ExitCode: -1,
+			}, fmt.Errorf("Failed to run command: %v", err)
+		}
+		return bash.Out{
+			StdOut:   strings.Replace(stdout.String(), "\n", "", -1),
+			StdErr:   strings.Replace(stderr.String(), "\n", "", -1),
+			ExitCode: exitErr.ExitStatus(),
+		}, nil
+	}
+	return bash.Out{
+		StdOut:   strings.Replace(stdout.String(), "\n", "", -1),
+		StdErr:   strings.Replace(stderr.String(), "\n", "", -1),
+		ExitCode: 0,
+	}, nil
 }

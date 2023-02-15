@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"os"
@@ -66,4 +67,33 @@ func initConfig() *viper.Viper {
 		}
 	}
 	return mainConfig
+}
+
+// create runner command to modify config file
+func (r Runner) setConfig(key string, value string) {
+	r.Config.Set(key, value)
+	if err := r.Config.WriteConfig(); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func configCommand() (cmd *cobra.Command) {
+	cmd = &cobra.Command{
+		Use:   "config",
+		Short: "config is a command to manage config file",
+		Long:  `config is a command to manage config file`,
+	}
+
+	var setCmd = &cobra.Command{
+		Use:   "set [key] [value]",
+		Short: "set config file by key and value",
+		Long:  `set is a command to set config file`,
+		Run: func(cmd *cobra.Command, args []string) {
+			runner.setConfig(args[0], args[1])
+		},
+	}
+
+	cmd.AddCommand(setCmd)
+
+	return
 }
