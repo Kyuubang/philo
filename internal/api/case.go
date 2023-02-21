@@ -83,9 +83,11 @@ func getBody(url string) (body []byte, httpCode int) {
 // https://raw.githubusercontent.com /<repo>/<branch>/<slug>/case.yaml
 func GetCase(repo string, branch string, slug string) (result CaseData, httpCode int) {
 	course := strings.Split(slug, "-")[0]
+	repos := strings.Split(repo, "/")
 
-	pathUrl := path.Join(repo, branch, course, slug, "case.yaml")
+	pathUrl := path.Join(repos[1], repos[2], branch, course, slug, "case.yaml")
 	url := githubRawHost + "/" + pathUrl
+	fmt.Println(url)
 
 	data, httpCode := getBody(url)
 

@@ -14,6 +14,11 @@ import (
 
 func (r Runner) labList(course string) {
 	var repo = strings.Split(r.Config.GetString("repo"), "/")
+	if len(repo) < 3 {
+		r.Log.MainLog.Error().Msg("invalid repo config")
+		logger.Console("invalid repo config").Error()
+		os.Exit(1)
+	}
 	var items, code = api.GetListLab(path.Join(repo[1], repo[2]), course)
 
 	switch code {
