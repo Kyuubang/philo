@@ -12,15 +12,12 @@ import (
 
 // ConfigFile is default structure config.json file
 type ConfigFile struct {
-	Repo  string `json:"repo,omitempty"`
-	Auths Auths  `json:"auths,omitempty"`
+	Repo  string            `json:"repo"`
+	Auths map[string]string `json:"auths"`
 }
 type GithubCom struct {
-	Username string `json:"username,omitempty"`
-	Token    string `json:"token,omitempty"`
-}
-type Auths struct {
-	GithubCom GithubCom `json:"github.com,omitempty"`
+	Username string `json:"username"`
+	Token    string `json:"token"`
 }
 
 // create config directory on $HOME/.philo
@@ -39,7 +36,9 @@ func createConfDir() string {
 
 // create default config file -> $HOME/.philo/config.json
 func createDefConf() {
-	var dataconfig ConfigFile
+	var dataconfig = ConfigFile{
+		Repo: "github.com/example/example",
+	}
 	file, _ := json.MarshalIndent(dataconfig, "", "\t")
 	pathconf := createConfDir()
 	err := ioutil.WriteFile(pathconf+"/config.json", file, 0600)

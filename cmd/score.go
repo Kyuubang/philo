@@ -87,7 +87,34 @@ func (r Runner) scoreCheck(labName string) {
 
 	logger.Console(fmt.Sprintf("Score: %d/%d", score(checkPoint, len(result.Grade)), 100)).Info()
 
-	logger.Console("Score check success").Success()
+	apis := api.CustomServer{
+		Host:  r.Config.GetString("auths.host"),
+		Token: r.Config.GetString("auths.token"),
+	}
+
+	fmt.Println(r.Config.GetString("auths.token"))
+
+	// push score to api
+	scoreData := api.ScoreData{
+		Username: r.Config.GetString("auths.username"),
+		Lab:      labName,
+		Score:    score(checkPoint, len(result.Grade)),
+	}
+
+	code, err = apis.PushScore(scoreData)
+	if err != nil {
+		logger.Console("Error pushing score").Error()
+		os.Exit(1)
+	}
+
+	switch code {
+	case 201:
+		logger.Console("Score pushed").Success()
+	case 202:
+		logger.Console("Dont worry we keep higher score").Success()
+	default:
+		logger.Console("cant push score").Error()
+	}
 }
 
 func (r Runner) scoreView(labName string) {
