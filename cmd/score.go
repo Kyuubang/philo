@@ -92,8 +92,6 @@ func (r Runner) scoreCheck(labName string) {
 		Token: r.Config.GetString("auths.token"),
 	}
 
-	fmt.Println(r.Config.GetString("auths.token"))
-
 	// push score to api
 	scoreData := api.ScoreData{
 		Username: r.Config.GetString("auths.username"),
@@ -118,7 +116,20 @@ func (r Runner) scoreCheck(labName string) {
 }
 
 func (r Runner) scoreView(labName string) {
-	logger.Console("Viewing score").Start()
+	logger.Console("Viewing score " + labName).Start()
+
+	apis := api.CustomServer{
+		Host:  r.Config.GetString("auths.host"),
+		Token: r.Config.GetString("auths.token"),
+	}
+
+	score, err := apis.GetScore(labName)
+	if err != nil {
+		logger.Console("Error getting score").Error()
+		os.Exit(1)
+	}
+
+	logger.Console(fmt.Sprintf("Score: %d/%d", score.Score, 100)).Info()
 
 	logger.Console("Score view success").Success()
 }

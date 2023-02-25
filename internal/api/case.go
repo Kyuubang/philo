@@ -87,7 +87,6 @@ func GetCase(repo string, branch string, slug string) (result CaseData, httpCode
 
 	pathUrl := path.Join(repos[1], repos[2], branch, course, slug, "case.yaml")
 	url := githubRawHost + "/" + pathUrl
-	fmt.Println(url)
 
 	data, httpCode := getBody(url)
 
