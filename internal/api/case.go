@@ -18,7 +18,7 @@ var (
 	githubAPIHost = "https://api.github.com"
 )
 
-type Labs struct {
+type CaseLabs struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 }
@@ -115,7 +115,7 @@ func GetReadme(repo string, branch string, slug string) (readme []byte, httpCode
 // GetListLab return array of string list available lab
 // request format  https://api.github.com/repos/Kyuubang/philo-sample-case/contents/linux
 func GetListLab(repo string, course string) (labList []string, httpCode int) {
-	var labs []Labs
+	var labs []CaseLabs
 
 	pathUrl := path.Join("repos", repo, "contents", course)
 	url := githubAPIHost + "/" + pathUrl

@@ -43,11 +43,8 @@ func (r Runner) login(host string) {
 
 	// login to custom server
 	if host != "github.com" {
-		cServer := api.CustomServer{
-			Host: host,
-		}
 
-		access, err := cServer.Login(user, pass)
+		access, err := api.Login(host, user, pass)
 		if err != nil {
 			// check if error is ErrorLoginFailed
 			switch err {
