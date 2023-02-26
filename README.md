@@ -1,28 +1,16 @@
 # Philo
 
-
-<p>
-<img align="left" src="https://user-images.githubusercontent.com/56214296/218955929-ec85d387-6537-49eb-9cc5-b721351d26b5.png" width=30% alt="Philo Logo"/>
-</p>
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-
-Philo is a simple CLI Tools that help you to automatically check your work 
-based on test case files. It's a simple way to check your work without
-having to check it manually.
+Philo is a simple CLI tools that help you to automatically check your work based on test case files. It allows students 
+to test their work on a local machine or virtual machine and automatically submit their results to a central server for 
+grading. Philo is designed to work with a local or virtual machine infrastructure, which can be managed using Vagrant as 
+an Infrastructure as Code (IaC) tool. Philo also supports cross-platform use, which enables students to use it regardless 
+of their operating system.
 
 ## Installation
 
 ### Download binary
 
-see release page here match with your architecture.
+see release page here match with your architecture. note: **tested on linux only**
 
 ### From source
 
@@ -32,15 +20,47 @@ see release page here match with your architecture.
 - [Vagrant](https://www.vagrantup.com/)
 - [VirtualBox](https://www.virtualbox.org/)
 
-Clone repository
+Clone repository with following command
+
 ```bash
 git clone https://github.com/Kyuubang/philo.git
 cd philo
 ```
 
-Build with golang 
+Build Philo with following command
+
 ```bash
 go build -o philo
 ```
 
+for admin user (to use `philo admin` command)
 
+```bash
+go build -o philo -tags admin
+```
+
+**Note:** If you want to build Philo for a different operating system, you can use the `GOOS` and `GOARCH` environment
+variables. For example, to build Philo for Windows on 64-bit architecture, you can use the following command:
+
+```bash
+GOOS=windows GOARCH=amd64 go build -o philo.exe
+```
+
+
+## Contributing
+
+This project is open to contributions. and I realize that many things can be improved. If you want to contribute to Philo, 
+follow these steps:
+
+1. Fork the Philo repository. 
+2. Create a new branch with a descriptive name. 
+3. Make your changes and commit them. 
+4. Push your changes to your forked repository. 
+5. Submit a pull request to the Philo repository.
+
+**Note:** If you want to contribute to Philo, you can fix available open issue or if you add new feature, please open new 
+issue first.
+
+## License
+
+Philo is licensed under the MIT License. See the LICENSE file for details.
