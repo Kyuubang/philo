@@ -39,4 +39,5 @@ func init() {
 	philoCmd.AddCommand(scoreCommand())
 	philoCmd.AddCommand(configCommand())
 	philoCmd.AddCommand(loginCommand())
+	philoCmd.AddCommand(courseCommand())
 }

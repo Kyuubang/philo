@@ -123,7 +123,9 @@ func (r Runner) scoreView(labName string) {
 		Token: r.Config.GetString("auths.token"),
 	}
 
-	score, err := apis.GetScore(labName)
+	// TODO: catch error within response code
+
+	score, _, err := apis.GetScore(labName)
 	if err != nil {
 		logger.Console("Error getting score").Error()
 		os.Exit(1)
