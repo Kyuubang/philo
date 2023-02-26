@@ -1,6 +1,6 @@
 # Philo
 
-Philo is a simple CLI tools that help you to automatically check your work based on test case files. It allows students 
+Philo is a simple CLI tools that help you to automatically check your assignment based on test case files. It allows students 
 to test their work on a local machine or virtual machine and automatically submit their results to a central server for 
 grading. Philo is designed to work with a local or virtual machine infrastructure, which can be managed using Vagrant as 
 an Infrastructure as Code (IaC) tool. Philo also supports cross-platform use, which enables students to use it regardless 
