@@ -63,4 +63,4 @@ issue first.
 
 ## License
 
-Philo is licensed under the MIT License. See the LICENSE file for details.
+Philo is licensed under the MIT License. See the [LICENSE](https://github.com/Kyuubang/philo/blob/master/LICENSE) file for details.
