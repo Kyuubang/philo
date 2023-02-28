@@ -4,6 +4,7 @@ package cmd
 
 import (
 	"bufio"
+	"encoding/csv"
 	"fmt"
 	"github.com/Kyuubang/philo/internal/api"
 	"github.com/Kyuubang/philo/logger"
@@ -244,6 +245,59 @@ func (r Runner) removeLab(labId int) {
 	}
 
 	logger.Console(response["message"]).Success()
+}
+
+func (r Runner) export(courseId int, classId int) {
+	logger.Console("exporting to csv").Start()
+
+	// get data export
+	reports, code, err := serverAPI.ExportScores(courseId, classId)
+
+	if code != 200 {
+		logger.Console("something went wrong!").Error()
+	}
+
+	// Create the CSV file
+	file, err := os.Create(fmt.Sprintf("%s-%s_%s.csv", reports.Class, reports.Course, reports.Date))
+	if err != nil {
+		logger.Console("cant create csv file").Error()
+	}
+	defer file.Close()
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	// getting list of labs name
+	labs, code, err := serverAPI.GetLabs(courseId)
+	if err != nil || code != 200 {
+		logger.Console("cant get list of name").Error()
+		fmt.Println(err, code)
+		os.Exit(1)
+	}
+
+	// Write the header row
+	header := []string{"Name", "Username"}
+	for _, lab := range labs.Labs {
+		header = append(header, lab.Lab)
+	}
+	header = append(header, "Total", "Average")
+	err = writer.Write(header)
+	if err != nil {
+		logger.Console("cant write to csv").Error()
+	}
+
+	// Write the data rows
+	for _, student := range reports.Reports {
+		data := []string{student.Name, student.Username}
+		for _, score := range student.Scores {
+			scores := strconv.Itoa(score.Score)
+			data = append(data, scores)
+		}
+		data = append(data, strconv.Itoa(student.Total), strconv.FormatFloat(student.Average, 'f', 2, 64))
+		err = writer.Write(data)
+		if err != nil {
+			logger.Console("cant write to csv").Error()
+		}
+	}
 }
 
 func isValidUsername(s string) bool {
@@ -548,11 +602,30 @@ func adminCommand() (cmd *cobra.Command) {
 		},
 	}
 
+	exportCmd := &cobra.Command{
+		Use:   "export",
+		Short: "export data",
+		Long:  "export data",
+		Run: func(cmd *cobra.Command, args []string) {
+			// convert string to int
+			courseId, err := strconv.Atoi(args[0])
+			if err != nil {
+				logger.Console("Error: " + err.Error()).Error()
+			}
+
+			classId, err := strconv.Atoi(args[1])
+			if err != nil {
+				logger.Console("Error: " + err.Error()).Error()
+			}
+			runner.export(courseId, classId)
+		},
+	}
+
 	getCmd.AddCommand(getClassCmd, getCoursesCmd, getLabsCmd, getStudentsCmd)
 	updateCmd.AddCommand(updateClassCmd, updateCourseCmd, updateLabCmd)
 	createCmd.AddCommand(createClassCmd, createCourseCmd, createLabCmd, createStudentCmd)
 	removeCmd.AddCommand(removeClassCmd, removeCourseCmd, removeLabCmd, removeStudentCmd)
-	cmd.AddCommand(getCmd, updateCmd, removeCmd, createCmd)
+	cmd.AddCommand(getCmd, updateCmd, removeCmd, createCmd, exportCmd)
 
 	return
 }

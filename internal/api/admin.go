@@ -545,3 +545,63 @@ func (server CustomServer) DeleteUser(userId int) (response map[string]string, c
 
 	return response, code, nil
 }
+
+type ExportResponse struct {
+	Class   string    `json:"class"`
+	Course  string    `json:"course"`
+	Date    string    `json:"date"`
+	Reports []Reports `json:"reports"`
+	Time    string    `json:"time"`
+}
+type Reports struct {
+	Name     string      `json:"name"`
+	Username string      `json:"username"`
+	Scores   []ScoreLabs `json:"scores"`
+	Average  float64     `json:"average"`
+	Total    int         `json:"total"`
+}
+
+type ScoreLabs struct {
+	LabName string `json:"lab_name"`
+	Score   int    `json:"score"`
+	ID      int    `json:"id"`
+}
+
+// ExportScores create api client to handle endpoint /export
+func (server CustomServer) ExportScores(courseId int, classId int) (reports ExportResponse, code int, err error) {
+	// create request
+	req, err := http.NewRequest("GET", server.Host+"/v1/admin/export", nil)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+server.Token)
+
+	// convert int to string
+	courseIdStr := strconv.Itoa(courseId)
+	classIdStr := strconv.Itoa(classId)
+
+	// add query
+	q := req.URL.Query()            // Get a copy of the query values.
+	q.Add("course_id", courseIdStr) // Add a new value to the set.
+	q.Add("class_id", classIdStr)   // Add a new value to the set.
+	req.URL.RawQuery = q.Encode()
+
+	// send request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return reports, code, err
+	}
+
+	defer resp.Body.Close()
+
+	// read body
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	// filter response output
+	err = json.Unmarshal(bodyBytes, &reports)
+	if err != nil {
+		return reports, code, err
+	}
+
+	code = resp.StatusCode
+
+	return reports, code, nil
+}
