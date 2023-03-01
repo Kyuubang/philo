@@ -65,48 +65,29 @@ func (r Runner) labView(lab string) {
 	}
 }
 
-// labCheck will check your work based on the lab you are doing
-func (r Runner) labCheck(lab string) {
-
-}
-
 func labCommand() (cmd *cobra.Command) {
 	cmd = &cobra.Command{
 		Use:   "lab",
-		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		Short: "view lab and list lab",
+		Long: `you can view instruction and list lab with this command,
+instruction will be shown in your terminal with markdown format`,
 	}
 
 	labList := &cobra.Command{
-		Use:   "list",
-		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-		Args: cobra.MinimumNArgs(1),
+		Use:   "list [COURSE NAME]",
+		Short: "list is a command to list available lab",
+		Long:  `list is a command to list available lab`,
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			runner.labList(args[0])
 		},
 	}
 
 	labView := &cobra.Command{
-		Use:   "view",
-		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-		Args: cobra.MinimumNArgs(1),
+		Use:   "view [LAB NAME]",
+		Short: "view lab instruction",
+		Long:  `it would be read the instruction from the repo and show it in your terminal, grab README.md from the repo on url`,
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			runner.labView(args[0])
 		},

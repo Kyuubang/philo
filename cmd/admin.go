@@ -391,38 +391,39 @@ func (r Runner) removeStudent(studentId int) {
 func adminCommand() (cmd *cobra.Command) {
 	cmd = &cobra.Command{
 		Use:   "admin",
-		Short: "config is a command to manage config file",
-		Long:  `config is a command to manage config file`,
+		Short: "admin is manage shopiea resources",
+		Long:  `this required admin role, admin is manage shopiea resources such as class, course, student, etc`,
 	}
 
 	getCmd := &cobra.Command{
 		Use:   "get",
 		Short: "print available resources",
-		Long:  `print available resources`,
+		Long:  `print available resources such as class, course, student, etc`,
 	}
 
 	updateCmd := &cobra.Command{
 		Use:   "update",
 		Short: "update available resources",
-		Long:  "update available resources",
+		Long:  "update resources such as class, course, student, etc",
 	}
 
 	removeCmd := &cobra.Command{
 		Use:   "remove",
-		Short: "remove available resources",
-		Long:  "remove available resources",
+		Short: "remove resources",
+		Long:  "remove resources such as class, course, student, etc",
 	}
 
 	createCmd := &cobra.Command{
 		Use:   "create",
-		Short: "create available resources",
-		Long:  "create available resources",
+		Short: "create resources",
+		Long:  "create resources such as class, course, student, etc",
 	}
 
 	getClassCmd := &cobra.Command{
 		Use:   "class",
 		Short: "get class",
-		Long:  "get class",
+		Long: `print available class
+format [id] [name]`,
 		Run: func(cmd *cobra.Command, args []string) {
 			runner.getClass()
 		},
@@ -431,17 +432,18 @@ func adminCommand() (cmd *cobra.Command) {
 	getCoursesCmd := &cobra.Command{
 		Use:   "courses",
 		Short: "get courses",
-		Long:  "get courses",
+		Long: `print available courses
+format [id] [name]`,
 		Run: func(cmd *cobra.Command, args []string) {
 			runner.getCourses()
 		},
 	}
 
 	getLabsCmd := &cobra.Command{
-		Use:   "labs",
+		Use:   "labs [COURSE ID]",
 		Short: "get labs",
 		Long:  "get labs",
-		Args:  cobra.MinimumNArgs(1),
+		Args:  cobra.MaximumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			courseId, err := strconv.Atoi(args[0])
 			if err != nil {
@@ -452,7 +454,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	getStudentsCmd := &cobra.Command{
-		Use:   "students",
+		Use:   "students [CLASS ID]",
 		Short: "get students",
 		Long:  "get students",
 		Args:  cobra.MinimumNArgs(1),
@@ -462,7 +464,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	updateClassCmd := &cobra.Command{
-		Use:   "class",
+		Use:   "class [CLASS ID] [CLASS NAME]",
 		Short: "update class",
 		Long:  "update class",
 		Args:  cobra.MinimumNArgs(2),
@@ -476,7 +478,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	updateCourseCmd := &cobra.Command{
-		Use:   "course",
+		Use:   "course [COURSE ID] [COURSE NAME]",
 		Short: "update course",
 		Long:  "update course",
 		Args:  cobra.MinimumNArgs(2),
@@ -490,7 +492,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	updateLabCmd := &cobra.Command{
-		Use:   "lab",
+		Use:   "lab [LAB ID] [LAB NAME]",
 		Short: "update lab",
 		Long:  "update lab",
 		Args:  cobra.MinimumNArgs(2),
@@ -504,7 +506,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	createClassCmd := &cobra.Command{
-		Use:   "class",
+		Use:   "class [CLASS NAME]",
 		Short: "create class",
 		Long:  "create class",
 		Args:  cobra.MinimumNArgs(1),
@@ -514,7 +516,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	createCourseCmd := &cobra.Command{
-		Use:   "course",
+		Use:   "course [COURSE NAME]",
 		Short: "create course",
 		Long:  "create course",
 		Args:  cobra.MinimumNArgs(1),
@@ -524,7 +526,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	createLabCmd := &cobra.Command{
-		Use:   "lab",
+		Use:   "lab [COURSE ID] [LAB NAME]",
 		Short: "create lab",
 		Long:  "create lab",
 		Args:  cobra.MinimumNArgs(2),
@@ -538,7 +540,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	createStudentCmd := &cobra.Command{
-		Use:   "student [username]",
+		Use:   "student [USERNAME]",
 		Short: "create user",
 		Long:  "create user",
 		Args:  cobra.MinimumNArgs(1),
@@ -548,7 +550,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	removeStudentCmd := &cobra.Command{
-		Use:   "student [userId]",
+		Use:   "student [USER ID]",
 		Short: "remove user",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -561,7 +563,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	removeClassCmd := &cobra.Command{
-		Use:   "class [classId]",
+		Use:   "class [CLASS ID]",
 		Short: "remove class",
 		Long:  "remove class",
 		Args:  cobra.MinimumNArgs(1),
@@ -575,7 +577,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	removeCourseCmd := &cobra.Command{
-		Use:   "course [courseId]",
+		Use:   "course [COURSE ID]",
 		Short: "remove course",
 		Long:  "remove course",
 		Args:  cobra.MinimumNArgs(1),
@@ -589,7 +591,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	removeLabCmd := &cobra.Command{
-		Use:   "lab [labId]",
+		Use:   "lab [LAB ID]",
 		Short: "remove lab",
 		Long:  "remove lab",
 		Args:  cobra.MinimumNArgs(1),
@@ -603,7 +605,7 @@ func adminCommand() (cmd *cobra.Command) {
 	}
 
 	exportCmd := &cobra.Command{
-		Use:   "export",
+		Use:   "export [COURSE ID] [CLASS ID]",
 		Short: "export data",
 		Long:  "export data",
 		Run: func(cmd *cobra.Command, args []string) {

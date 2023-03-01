@@ -139,40 +139,25 @@ func (r Runner) scoreView(labName string) {
 func scoreCommand() (cmd *cobra.Command) {
 	cmd = &cobra.Command{
 		Use:   "score",
-		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		Short: "manage score of lab",
+		Long:  `manage score of lab you can check score or view score`,
 	}
 
 	cmd.AddCommand(
 		&cobra.Command{
-			Use:   "check",
-			Short: "A brief description of your command",
-			Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-			Args: cobra.MinimumNArgs(1),
+			Use:   "check [LAB]",
+			Short: "run all case and return score",
+			Long:  `run all case and return score, it grab case.yaml from repo and run it on vm`,
+			Args:  cobra.MinimumNArgs(1),
 			Run: func(cmd *cobra.Command, args []string) {
 				runner.scoreCheck(args[0])
 			},
 		},
 		&cobra.Command{
-			Use:   "view",
-			Short: "A brief description of your command",
-			Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-			Args: cobra.MinimumNArgs(1),
+			Use:   "view [LAB]",
+			Short: "view score of lab",
+			Long:  `view score of lab if you already run check`,
+			Args:  cobra.MinimumNArgs(1),
 			Run: func(cmd *cobra.Command, args []string) {
 				runner.scoreView(args[0])
 			},

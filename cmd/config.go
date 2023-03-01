@@ -84,7 +84,7 @@ func configCommand() (cmd *cobra.Command) {
 	}
 
 	var setCmd = &cobra.Command{
-		Use:   "set [key] [value]",
+		Use:   "set [KEY] [VALUE]",
 		Short: "set config file by key and value",
 		Long:  `set is a command to set config file`,
 		Run: func(cmd *cobra.Command, args []string) {

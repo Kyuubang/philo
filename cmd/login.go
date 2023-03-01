@@ -79,9 +79,9 @@ func (r Runner) login(host string) {
 
 func loginCommand() (cmd *cobra.Command) {
 	cmd = &cobra.Command{
-		Use:   "login [server]",
-		Short: "config is a command to manage config file",
-		Long:  `config is a command to manage config file`,
+		Use:   "login [SERVER]",
+		Short: "login to server",
+		Long:  `login to server, server should be include protocol and port`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) < 1 {
 				logger.Console("Missing server").Error()

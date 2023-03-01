@@ -34,13 +34,11 @@ func courseCommand() (cmd *cobra.Command) {
 	cmd = &cobra.Command{
 		Use:   "course",
 		Short: "course is a command to manage course",
-		Long:  `course is a command to manage course`,
 	}
 
 	var listCmd = &cobra.Command{
 		Use:   "list",
-		Short: "set config file by key and value",
-		Long:  `set is a command to set config file`,
+		Short: "list is a command to list available course",
 		Run: func(cmd *cobra.Command, args []string) {
 			registered, err := cmd.Flags().GetBool("registered")
 			if err != nil {

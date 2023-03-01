@@ -273,7 +273,7 @@ for stability use "philo server ssh --command" to show ssh command`,
 	serverSSH.Flags().BoolP("command", "c", false, "show ssh command")
 
 	serverUp := &cobra.Command{
-		Use:   "up [lab name]",
+		Use:   "up [LAB NAME]",
 		Short: "bringing up your server",
 		Long:  `philo server up will bring up your server, that is same as vagrant up`,
 		Args:  cobra.MaximumNArgs(1),
@@ -283,7 +283,7 @@ for stability use "philo server ssh --command" to show ssh command`,
 	}
 
 	serverShow := &cobra.Command{
-		Use:   "show [lab name]",
+		Use:   "show [LAB NAME]",
 		Short: "show your server status",
 		Long:  `philo server show will show your server status, that is same as vagrant status`,
 		Args:  cobra.MinimumNArgs(1),
@@ -293,11 +293,11 @@ for stability use "philo server ssh --command" to show ssh command`,
 	}
 
 	serverHalt := &cobra.Command{
-		Use:   "halt [lab name]",
+		Use:   "halt [LAB NAME]",
 		Short: "halt/shutdown your server",
 		Long: `philo server halt will halt/shutdown your server, that is same as vagrant halt
 
-		make sure shutdown server before shutdown your computer`,
+		make sure shutdown server before shutdown your computer to avoid data corruption`,
 		Args: cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			runner.serverHalt(args[0])
@@ -305,7 +305,7 @@ for stability use "philo server ssh --command" to show ssh command`,
 	}
 
 	serverDestroy := &cobra.Command{
-		Use:   "destroy [lab name]",
+		Use:   "destroy [LAB NAME]",
 		Short: "destroy your server",
 		Long:  `philo server destroy will destroy your server, that is same as vagrant destroy`,
 		Args:  cobra.MinimumNArgs(1),
