@@ -8,8 +8,9 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var philoCmd = &cobra.Command{
-	Use:   "philo",
-	Short: "Test case executor for your labs",
+	Use:     "philo",
+	Version: "dev",
+	Short:   "Test case executor for your labs",
 	Long: `Philo is a test case executor for your labs. It is designed to be used with
 the shopiea server, which is used to manage your labs and their test cases.`,
 }
