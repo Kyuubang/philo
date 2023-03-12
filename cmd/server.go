@@ -306,7 +306,7 @@ func (r Runner) serverSSH(labName string, vmName string, sshCmd bool) {
 func serverCommand() (cmd *cobra.Command) {
 	cmd = &cobra.Command{
 		Use:   "server",
-		Short: "manage your local server",
+		Short: "manage your local server [EXPERIMENTAL]",
 		Long: `philo use vagrant to manage your local server, command replacement for serveral vagrant command
 vagrant up, vagrant destroy, vagrant halt, vagrant status`,
 	}
