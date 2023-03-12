@@ -1,7 +1,5 @@
 package remote
 
-// TODO: Create a remote command executor that can be used to execute commands on a remote host.
-
 import (
 	"bytes"
 	"fmt"

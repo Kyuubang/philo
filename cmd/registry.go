@@ -31,7 +31,6 @@ var runner = Runner{
 }
 
 func init() {
-
 	// register all subcommands
 	philoCmd.AddCommand(initCommand())
 	philoCmd.AddCommand(labCommand())

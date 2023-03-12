@@ -3,6 +3,7 @@ package cmd
 import (
 	"bufio"
 	"fmt"
+	"github.com/Kyuubang/philo/internal/api"
 	"github.com/Kyuubang/philo/internal/utils/remote"
 	"github.com/Kyuubang/philo/logger"
 	"github.com/bmatcuk/go-vagrant"
@@ -13,8 +14,8 @@ import (
 )
 
 // GetSSHConfig returns the SSH config for the given lab
-func getVMSSHConfig(labName string) (sshConfig map[string]vagrant.SSHConfig, err error) {
-	client, err := vagrant.NewVagrantClient("/home/bayhaqi/Repository/Github/philo-sample-case/linux/linux-001-1/vagrant")
+func getVMSSHConfig(vagrantDir string) (sshConfig map[string]vagrant.SSHConfig, err error) {
+	client, err := vagrant.NewVagrantClient(vagrantDir)
 
 	if err != nil {
 		return nil, err
@@ -37,8 +38,8 @@ func getVMSSHConfig(labName string) (sshConfig map[string]vagrant.SSHConfig, err
 }
 
 // GetStatus returns the status of the given lab
-func getVMStatus(labName string) (status map[string]string, err error) {
-	client, err := vagrant.NewVagrantClient("/home/bayhaqi/Repository/Github/philo-sample-case/linux/linux-001-1/vagrant")
+func getVMStatus(vagrantDir string) (status map[string]string, err error) {
+	client, err := vagrant.NewVagrantClient(vagrantDir)
 	if err != nil {
 		return nil, err
 	}
@@ -57,12 +58,19 @@ func getVMStatus(labName string) (status map[string]string, err error) {
 	return statusCommand.StatusResponse.Status, nil
 }
 
-// TODO: Create replacement command for vagrant up, ssh, destroy, etc
-
 func (r Runner) serverShow(labName string) {
 	logger.Console("Showing server").Start()
 
-	var statusVM, err = getVMStatus(labName)
+	cases, code := api.GetCase(r.Config.GetString("repo"), "master", labName)
+	if code != 200 {
+		r.Log.MainLog.Error().Msg("Error getting lab info")
+		logger.Console("Error getting lab info").Error()
+		os.Exit(1)
+	}
+
+	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
+	//fmt.Println("Vagrant spec: " + specVM)
+	var statusVM, err = getVMStatus(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
 		os.Exit(1)
@@ -77,7 +85,16 @@ func (r Runner) serverShow(labName string) {
 func (r Runner) serverHalt(labName string) {
 	logger.Console("Halting server").Start()
 
-	client, err := vagrant.NewVagrantClient("/home/bayhaqi/Repository/Github/philo-sample-case/linux/linux-001-1/vagrant")
+	cases, code := api.GetCase(r.Config.GetString("repo"), "master", labName)
+	if code != 200 {
+		r.Log.MainLog.Error().Msg("Error getting lab info")
+		logger.Console("Error getting lab info").Error()
+		os.Exit(1)
+	}
+
+	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
+
+	client, err := vagrant.NewVagrantClient(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
 		os.Exit(1)
@@ -103,7 +120,16 @@ func (r Runner) serverHalt(labName string) {
 func (r Runner) serverDestroy(labName string) {
 	logger.Console("Destroying server " + labName).Start()
 
-	client, err := vagrant.NewVagrantClient("/home/bayhaqi/Repository/Github/philo-sample-case/linux/linux-001-1/vagrant")
+	cases, code := api.GetCase(r.Config.GetString("repo"), "master", labName)
+	if code != 200 {
+		r.Log.MainLog.Error().Msg("Error getting lab info")
+		logger.Console("Error getting lab info").Error()
+		os.Exit(1)
+	}
+
+	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
+
+	client, err := vagrant.NewVagrantClient(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
 		os.Exit(1)
@@ -114,27 +140,41 @@ func (r Runner) serverDestroy(labName string) {
 	ok := destroyCommand.Run()
 	if ok != nil {
 		r.Log.MainLog.Error().Msg(ok.Error())
+		logger.Console("Vagrant destroy failed").Error()
 		os.Exit(1)
 	}
 
 	if destroyCommand.Error != nil {
 		r.Log.MainLog.Error().Msg(destroyCommand.ErrorResponse.Error.Error())
+		logger.Console("Vagrant destroy failed").Error()
 		os.Exit(1)
 	}
 
 	logger.Console("Vagrant destroy success").Success()
 }
 
-func (r Runner) serverCreate(labName string) {
+func (r Runner) serverCreate(labName string, verbose bool) {
 	logger.Console("Creating server " + labName).Start()
-	client, err := vagrant.NewVagrantClient("/home/bayhaqi/Repository/Github/philo-sample-case/linux/linux-001-1/vagrant")
+
+	cases, code := api.GetCase(r.Config.GetString("repo"), "master", labName)
+	if code != 200 {
+		r.Log.MainLog.Error().Msg("Error getting lab info")
+		logger.Console("Error getting lab info").Error()
+		os.Exit(1)
+	}
+
+	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
+
+	client, err := vagrant.NewVagrantClient(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
 		os.Exit(1)
 	}
 
+	// TODO: bring verbose flag from config
+	// TODO: get verbose to log file
 	vagrantUp := client.Up()
-	vagrantUp.Verbose = false
+	vagrantUp.Verbose = verbose
 	if ok := vagrantUp.Run(); ok != nil {
 		r.Log.MainLog.Error().Msg(ok.Error())
 		os.Exit(1)
@@ -145,19 +185,32 @@ func (r Runner) serverCreate(labName string) {
 		os.Exit(1)
 	}
 
-	logger.Console("Vagrant up success").Success()
-
-	response := vagrantUp.UpResponse
-	for index, _ := range response.VMInfo {
-		fmt.Println("philo server ssh", index)
+	vmStatus, err := getVMStatus(specVM)
+	if err != nil {
+		r.Log.MainLog.Error().Msg(err.Error())
+		os.Exit(1)
 	}
+	for VMName, status := range vmStatus {
+		fmt.Println("    " + VMName + ": " + status)
+	}
+
+	logger.Console("Vagrant up success").Success()
 }
 
 func (r Runner) serverSSH(labName string, vmName string, sshCmd bool) {
 	logger.Console("SSH server " + labName).Start()
 
+	cases, code := api.GetCase(r.Config.GetString("repo"), "master", labName)
+	if code != 200 {
+		r.Log.MainLog.Error().Msg("Error getting lab info")
+		logger.Console("Error getting lab info").Error()
+		os.Exit(1)
+	}
+
+	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
+
 	logger.Console("Checking status of server").Info()
-	if status, err := getVMStatus(labName); err != nil {
+	if status, err := getVMStatus(specVM); err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
 		os.Exit(1)
 	} else {
@@ -167,7 +220,7 @@ func (r Runner) serverSSH(labName string, vmName string, sshCmd bool) {
 		}
 	}
 
-	sshConfig, err := getVMSSHConfig(labName)
+	sshConfig, err := getVMSSHConfig(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
 		os.Exit(1)
@@ -176,7 +229,11 @@ func (r Runner) serverSSH(labName string, vmName string, sshCmd bool) {
 	if sshCmd {
 		fmt.Println("vagrant ssh " + vmName)
 		fmt.Println("or use ssh instead")
-		fmt.Printf("ssh -i %s -p %d %s@%s", sshConfig[vmName].IdentityFile, sshConfig[vmName].Port, sshConfig[vmName].User, sshConfig[vmName].HostName)
+		fmt.Printf("ssh -i %s -p %d %s@%s",
+			sshConfig[vmName].IdentityFile,
+			sshConfig[vmName].Port,
+			sshConfig[vmName].User,
+			sshConfig[vmName].HostName)
 		logger.Console("SSH command").Success()
 		return
 	}
@@ -276,11 +333,18 @@ for stability use "philo server ssh --command" to show ssh command`,
 		Use:   "up [LAB NAME]",
 		Short: "bringing up your server",
 		Long:  `philo server up will bring up your server, that is same as vagrant up`,
-		Args:  cobra.MaximumNArgs(1),
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			runner.serverCreate(args[0])
+			verbose, err := cmd.Flags().GetBool("verbose")
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			runner.serverCreate(args[0], verbose)
 		},
 	}
+	// create flag for verbose
+	serverUp.Flags().BoolP("verbose", "v", false, "show vagrant output")
 
 	serverShow := &cobra.Command{
 		Use:   "show [LAB NAME]",

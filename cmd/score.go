@@ -42,8 +42,11 @@ func (r Runner) scoreCheck(labName string) {
 		logger.Console("Unknown error").Error()
 		os.Exit(1)
 	}
+	// TODO: get VM Spec from config api it supposed to be in /v1/info\
+	var vmSpec = labName
+
 	// setup remote command setup
-	VMSSHConfig, err := getVMSSHConfig(labName)
+	VMSSHConfig, err := getVMSSHConfig(vmSpec)
 	if err != nil {
 		logger.Console("Error getting VM SSH config").Error()
 		os.Exit(1)

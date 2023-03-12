@@ -61,8 +61,6 @@ func LabLog(lab string) *Logger {
 	return logLab
 }
 
-// TODO: Multiwriter to Console UI and Logging if it have same messages
-
 // Color it take function to change color of printed string
 type Color struct{}
 
