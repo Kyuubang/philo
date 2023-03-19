@@ -79,6 +79,15 @@ func getBody(url string) (body []byte, httpCode int) {
 	return data, resp.StatusCode
 }
 
+func FileCaseParser(file []byte) (result CaseData, err error) {
+	err = yaml.Unmarshal(file, &result)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
 // GetCase GitHub file with specific url format
 // https://raw.githubusercontent.com /<repo>/<branch>/<slug>/case.yaml
 func GetCase(repo string, branch string, slug string) (result CaseData, httpCode int) {
