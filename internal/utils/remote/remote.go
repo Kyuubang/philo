@@ -19,17 +19,17 @@ type SSHClient struct {
 }
 
 // PublicKeyFile read manual private key file from $HOME/.nusactl/hosts.yaml
-func PublicKeyFile(file string) ssh.AuthMethod {
+func PublicKeyFile(file string) (ssh.AuthMethod, error) {
 	buffer, err := ioutil.ReadFile(file)
 	if err != nil {
-		fmt.Println("Failed when read ssh-key file")
+		return nil, err
 	}
 
 	key, err := ssh.ParsePrivateKey(buffer)
 	if err != nil {
-		fmt.Println("bad private key")
+		return nil, err
 	}
-	return ssh.PublicKeys(key)
+	return ssh.PublicKeys(key), nil
 }
 
 // SSHAgent read ssh agent's Host
@@ -62,7 +62,7 @@ func (client *SSHClient) RunRemoteCommand(command string) (bash.Out, error) {
 
 	var session, err = client.newSession()
 	if err != nil {
-
+		return bash.Out{}, err
 	}
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer

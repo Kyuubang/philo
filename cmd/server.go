@@ -240,10 +240,15 @@ func (r Runner) serverSSH(labName string, vmName string, sshCmd bool) {
 
 	logger.Console("philo ssh is EXPERIMENTAL use \"--command\" instead to show ssh command").Warn()
 
+	privKey, err := remote.PublicKeyFile(sshConfig[vmName].IdentityFile)
+	if err != nil {
+		r.Log.MainLog.Error().Str("host", vmName).Msg(err.Error())
+	}
+
 	config := &ssh.ClientConfig{
 		User: sshConfig[vmName].User,
 		Auth: []ssh.AuthMethod{
-			remote.PublicKeyFile(sshConfig[vmName].IdentityFile),
+			privKey,
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
