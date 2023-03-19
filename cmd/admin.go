@@ -628,7 +628,6 @@ format [id] [name]`,
 	createCmd.AddCommand(createClassCmd, createCourseCmd, createLabCmd, createStudentCmd)
 	removeCmd.AddCommand(removeClassCmd, removeCourseCmd, removeLabCmd, removeStudentCmd)
 	cmd.AddCommand(getCmd, updateCmd, removeCmd, createCmd, exportCmd)
-
 	return
 }
 

@@ -107,6 +107,9 @@ func (server CustomServer) GetCourses() (course CoursesResponse, code int, err e
 func (server CustomServer) GetLabs(courseId int) (labs LabsResponse, code int, err error) {
 	// create request
 	req, err := http.NewRequest("GET", server.Host+"/v1/labs", nil)
+	if err != nil {
+		return labs, code, err
+	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+server.Token)
 
@@ -146,6 +149,9 @@ func (server CustomServer) PushScore(data ScoreData) (code int, err error) {
 
 	// create request
 	req, err := http.NewRequest("POST", server.Host+"/v1/score", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return code, err
+	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+server.Token)
 
