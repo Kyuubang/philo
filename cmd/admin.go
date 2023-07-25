@@ -17,8 +17,6 @@ import (
 	"syscall"
 )
 
-// TODO: create function to provide admin operations
-
 var (
 	serverAPI api.CustomServer
 )

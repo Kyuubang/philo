@@ -92,7 +92,6 @@ func (r Runner) scoreCheck(labName string) {
 	}
 
 	if vagrants {
-		// TODO: get VM Spec from config api it supposed to be in /v1/info
 		vmSpec = caseData.Spec
 
 		// setup remote command setup
