@@ -5,3 +5,6 @@ sample
 assests
 out
 .env.mock
+
+.jekyll-cache
+_site
