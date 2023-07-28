@@ -1,10 +1,13 @@
 <h1 align="center">philo</h1>
 
 <p align="center">
-  <a href="https://goreportcard.com/report/github.com/digitalocean/doctl">
-    <img src="https://goreportcard.com/badge/github.com/digitalocean/doctl" alt="Go Report Card" />
+  <a href="https://goreportcard.com/report/github.com/Kyuubang/philo">
+    <img src="https://goreportcard.com/badge/github.com/Kyuubang/philo" alt="Go Report Card" />
   </a>
   <img alt="GitHub go.mod Go version (subdirectory of monorepo)" src="https://img.shields.io/github/go-mod/go-version/Kyuubang/philo">
+  <a href="https://github.com/Kyuubang/philo/blob/master/LICENSE">
+    <img alt="GitHub" src="https://img.shields.io/github/license/Kyuubang/philo">
+  </a>
 </p>
 
 Philo is a simple CLI tools that help you to automatically check your assignment based on test case files. It allows students 
