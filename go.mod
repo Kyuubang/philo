@@ -1,6 +1,6 @@
 module github.com/Kyuubang/philo
 
-go 1.21
+go 1.23.0
 
 require (
 	github.com/bmatcuk/go-vagrant v1.6.0
@@ -12,8 +12,8 @@ require (
 	github.com/rs/zerolog v1.29.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
-	golang.org/x/crypto v0.31.0
-	golang.org/x/term v0.27.0
+	golang.org/x/crypto v0.35.0
+	golang.org/x/term v0.29.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -68,9 +68,9 @@ require (
 	github.com/yuin/goldmark-emoji v1.0.1 // indirect
 	golang.org/x/mod v0.17.0 // indirect
 	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
