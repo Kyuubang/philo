@@ -6,7 +6,6 @@ import (
 	"github.com/Kyuubang/philo/internal/utils/bash"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
-	"io/ioutil"
 	"net"
 	"os"
 	"strings"
@@ -20,7 +19,7 @@ type SSHClient struct {
 
 // PublicKeyFile read manual private key file from $HOME/.nusactl/hosts.yaml
 func PublicKeyFile(file string) (ssh.AuthMethod, error) {
-	buffer, err := ioutil.ReadFile(file)
+	buffer, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}
@@ -74,20 +73,20 @@ func (client *SSHClient) RunRemoteCommand(command string) (bash.Out, error) {
 		exitErr, ok := err.(*ssh.ExitError)
 		if !ok {
 			return bash.Out{
-				StdOut:   strings.Replace(stdout.String(), "\n", "", -1),
-				StdErr:   strings.Replace(stderr.String(), "\n", "", -1),
+				StdOut:   strings.ReplaceAll(stdout.String(), "\n", ""),
+				StdErr:   strings.ReplaceAll(stderr.String(), "\n", ""),
 				ExitCode: -1,
 			}, fmt.Errorf("Failed to run command: %v", err)
 		}
 		return bash.Out{
-			StdOut:   strings.Replace(stdout.String(), "\n", "", -1),
-			StdErr:   strings.Replace(stderr.String(), "\n", "", -1),
+			StdOut:   strings.ReplaceAll(stdout.String(), "\n", ""),
+			StdErr:   strings.ReplaceAll(stderr.String(), "\n", ""),
 			ExitCode: exitErr.ExitStatus(),
 		}, nil
 	}
 	return bash.Out{
-		StdOut:   strings.Replace(stdout.String(), "\n", "", -1),
-		StdErr:   strings.Replace(stderr.String(), "\n", "", -1),
+		StdOut:   strings.ReplaceAll(stdout.String(), "\n", ""),
+		StdErr:   strings.ReplaceAll(stderr.String(), "\n", ""),
 		ExitCode: 0,
 	}, nil
 }

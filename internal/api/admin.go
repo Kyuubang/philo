@@ -5,7 +5,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 )
@@ -47,7 +47,7 @@ func (server CustomServer) GetUsers(classId string) (response UsersResponse, cod
 	req.Header.Set("Content-Type", "application/json")
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, -1, err
@@ -59,7 +59,10 @@ func (server CustomServer) GetUsers(classId string) (response UsersResponse, cod
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -82,7 +85,7 @@ func (server CustomServer) GetClasses() (response GetClassesResponse, code int, 
 	req.Header.Set("Content-Type", "application/json")
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, -1, err
@@ -94,7 +97,10 @@ func (server CustomServer) GetClasses() (response GetClassesResponse, code int, 
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -118,7 +124,7 @@ func (server CustomServer) CreateClass(className string) (response CreateClassRe
 	req.Header.Set("Authorization", "Bearer "+server.Token)
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -130,7 +136,10 @@ func (server CustomServer) CreateClass(className string) (response CreateClassRe
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -162,7 +171,7 @@ func (server CustomServer) UpdateClass(classId int, className string) (response 
 	req.URL.RawQuery = q.Encode()
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -174,7 +183,10 @@ func (server CustomServer) UpdateClass(classId int, className string) (response 
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -200,7 +212,7 @@ func (server CustomServer) DeleteClass(classId int) (response map[string]string,
 	req.URL.RawQuery = q.Encode()
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -212,7 +224,10 @@ func (server CustomServer) DeleteClass(classId int) (response map[string]string,
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -236,7 +251,7 @@ func (server CustomServer) CreateLabs(courseId int, labName string) (response Cr
 	req.Header.Set("Authorization", "Bearer "+server.Token)
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -248,7 +263,10 @@ func (server CustomServer) CreateLabs(courseId int, labName string) (response Cr
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -280,7 +298,7 @@ func (server CustomServer) UpdateLabs(labId int, labName string) (response map[s
 	req.URL.RawQuery = q.Encode()
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -292,7 +310,10 @@ func (server CustomServer) UpdateLabs(labId int, labName string) (response map[s
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -318,7 +339,7 @@ func (server CustomServer) DeleteLabs(labId int) (response map[string]string, co
 	req.URL.RawQuery = q.Encode()
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -330,7 +351,10 @@ func (server CustomServer) DeleteLabs(labId int) (response map[string]string, co
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -354,7 +378,7 @@ func (server CustomServer) CreateCourse(courseName string) (response CreateCours
 	req.Header.Set("Authorization", "Bearer "+server.Token)
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -366,7 +390,10 @@ func (server CustomServer) CreateCourse(courseName string) (response CreateCours
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -398,7 +425,7 @@ func (server CustomServer) UpdateCourse(courseId int, courseName string) (respon
 	req.URL.RawQuery = q.Encode()
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -410,7 +437,10 @@ func (server CustomServer) UpdateCourse(courseId int, courseName string) (respon
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -448,7 +478,10 @@ func (server CustomServer) DeleteCourse(courseId int) (response map[string]strin
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -486,7 +519,7 @@ func (server CustomServer) CreateUser(user User) (response CreateUserResponse, c
 	req.Header.Set("Authorization", "Bearer "+server.Token)
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -498,7 +531,10 @@ func (server CustomServer) CreateUser(user User) (response CreateUserResponse, c
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -524,7 +560,7 @@ func (server CustomServer) DeleteUser(userId int) (response map[string]string, c
 	req.URL.RawQuery = q.Encode()
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return response, code, err
@@ -536,7 +572,10 @@ func (server CustomServer) DeleteUser(userId int) (response map[string]string, c
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return response, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &response)
 	if err != nil {
@@ -585,7 +624,7 @@ func (server CustomServer) ExportScores(courseId int, classId int) (reports Expo
 	req.URL.RawQuery = q.Encode()
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return reports, code, err
@@ -594,7 +633,10 @@ func (server CustomServer) ExportScores(courseId int, classId int) (reports Expo
 	defer resp.Body.Close()
 
 	// read body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return reports, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &reports)
 	if err != nil {
