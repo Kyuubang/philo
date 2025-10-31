@@ -8,7 +8,6 @@ import (
 	"github.com/bmatcuk/go-vagrant"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
-	"io/ioutil"
 	"os"
 )
 
@@ -53,7 +52,7 @@ func (r Runner) scoreCheck(labName string) {
 			}
 		}
 
-		content, err := ioutil.ReadFile(file)
+		content, err := os.ReadFile(file)
 		if err != nil {
 			logger.Console("Error reading file").Error()
 			os.Exit(1)

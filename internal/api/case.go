@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"path"
@@ -42,21 +42,19 @@ type Grade struct {
 }
 
 func getBody(url string) (body []byte, httpCode int) {
-	// set context to cancel if timeout
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
+	// set context with timeout to prevent goroutine leak
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*3)
+	defer cancel()
 
 	// request with context
-	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil) // it will return later 3 sec
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	// setup http client
-	client := &http.Client{}
-
-	// use go routine to setup sleep and cancel
-	go func() {
-		time.Sleep(time.Minute * 3)
-		cancel()
-	}()
+	client := getHTTPClient()
 
 	// do request with setup
 	resp, err := client.Do(req)
@@ -66,15 +64,15 @@ func getBody(url string) (body []byte, httpCode int) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	defer resp.Body.Close()
+
 	// read all body it should be json format
 	// error if cant parse to json
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	resp.Body.Close()
 
 	return data, resp.StatusCode
 }
