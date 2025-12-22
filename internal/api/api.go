@@ -4,8 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"sync"
+)
+
+var (
+	httpClient     *http.Client
+	httpClientOnce sync.Once
 )
 
 type LoginData struct {
@@ -25,8 +31,16 @@ var (
 	ErrorServer      = fmt.Errorf("Server error")
 )
 
+// getHTTPClient returns a shared HTTP client instance for connection reuse
+func getHTTPClient() *http.Client {
+	httpClientOnce.Do(func() {
+		httpClient = &http.Client{}
+	})
+	return httpClient
+}
+
 // Login create authentication to server
-func Login(host string, username string, password string) (response LoginResponse, err error) {
+func Login(host, username, password string) (response LoginResponse, err error) {
 	var data = LoginData{
 		Username: username,
 		Password: password,
@@ -49,7 +63,10 @@ func Login(host string, username string, password string) (response LoginRespons
 	var userr LoginResponse
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(req.Body)
+	bodyBytes, err := io.ReadAll(req.Body)
+	if err != nil {
+		return response, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &userr)
 	if err != nil {
@@ -71,7 +88,7 @@ func Login(host string, username string, password string) (response LoginRespons
 
 func (server CustomServer) GetCourses() (course CoursesResponse, code int, err error) {
 	// create request with function getBody
-	req, err := http.NewRequest("GET", server.Host+"/v1/course", nil)
+	req, err := http.NewRequest("GET", server.Host+"/v1/course", http.NoBody)
 
 	if err != nil {
 		return course, code, err
@@ -94,7 +111,10 @@ func (server CustomServer) GetCourses() (course CoursesResponse, code int, err e
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return course, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &course)
 	if err != nil {
@@ -106,7 +126,7 @@ func (server CustomServer) GetCourses() (course CoursesResponse, code int, err e
 
 func (server CustomServer) GetLabs(courseId int) (labs LabsResponse, code int, err error) {
 	// create request
-	req, err := http.NewRequest("GET", server.Host+"/v1/labs", nil)
+	req, err := http.NewRequest("GET", server.Host+"/v1/labs", http.NoBody)
 	if err != nil {
 		return labs, code, err
 	}
@@ -118,7 +138,7 @@ func (server CustomServer) GetLabs(courseId int) (labs LabsResponse, code int, e
 	req.URL.RawQuery = q.Encode()
 
 	// send request
-	client := &http.Client{}
+	client := getHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return labs, code, err
@@ -130,7 +150,10 @@ func (server CustomServer) GetLabs(courseId int) (labs LabsResponse, code int, e
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return labs, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &labs)
 	if err != nil {
@@ -169,7 +192,7 @@ func (server CustomServer) PushScore(data ScoreData) (code int, err error) {
 
 func (server CustomServer) GetScore(labName string) (score GetScoreResponse, code int, err error) {
 	// create request
-	req, err := http.NewRequest("GET", server.Host+"/v1/score", nil)
+	req, err := http.NewRequest("GET", server.Host+"/v1/score", http.NoBody)
 
 	q := req.URL.Query()       // Get a copy of the query values.
 	q.Add("lab_name", labName) // Add a new value to the set.
@@ -193,7 +216,10 @@ func (server CustomServer) GetScore(labName string) (score GetScoreResponse, cod
 	defer resp.Body.Close()
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return score, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &score)
 	if err != nil {
@@ -206,7 +232,7 @@ func (server CustomServer) GetScore(labName string) (score GetScoreResponse, cod
 // GetConfig to get config from server at /v1/info endpoint
 func (server CustomServer) GetConfig() (config map[string]interface{}, code int, err error) {
 	// create request
-	req, err := http.NewRequest("GET", server.Host+"/v1/info", nil)
+	req, err := http.NewRequest("GET", server.Host+"/v1/info", http.NoBody)
 	if err != nil {
 		return config, -1, err
 	}
@@ -227,7 +253,10 @@ func (server CustomServer) GetConfig() (config map[string]interface{}, code int,
 	code = resp.StatusCode
 
 	// read response body
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return config, code, err
+	}
 	// filter response output
 	err = json.Unmarshal(bodyBytes, &config)
 	if err != nil {

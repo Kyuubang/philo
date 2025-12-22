@@ -120,6 +120,6 @@ func (m modelLister) View() string {
 //
 //	if _, err := tea.NewProgram(m).Run(); err != nil {
 //		fmt.Println("Error running program:", err)
-//		os.Exit(1)
+//		
 //	}
 //}

@@ -65,7 +65,7 @@ func (r Runner) serverShow(labName string) {
 	if code != 200 {
 		r.Log.MainLog.Error().Msg("Error getting lab info")
 		logger.Console("Error getting lab info").Error()
-		os.Exit(1)
+		
 	}
 
 	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
@@ -73,7 +73,7 @@ func (r Runner) serverShow(labName string) {
 	var statusVM, err = getVMStatus(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
-		os.Exit(1)
+		
 	}
 
 	for machine, status := range statusVM {
@@ -89,7 +89,7 @@ func (r Runner) serverHalt(labName string) {
 	if code != 200 {
 		r.Log.MainLog.Error().Msg("Error getting lab info")
 		logger.Console("Error getting lab info").Error()
-		os.Exit(1)
+		
 	}
 
 	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
@@ -97,7 +97,7 @@ func (r Runner) serverHalt(labName string) {
 	client, err := vagrant.NewVagrantClient(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
-		os.Exit(1)
+		
 	}
 
 	haltCommand := client.Halt()
@@ -106,12 +106,12 @@ func (r Runner) serverHalt(labName string) {
 	if ok != nil {
 		r.Log.MainLog.Error().Msg(ok.Error())
 		logger.Console("Vagrant halt failed").Error()
-		os.Exit(1)
+		
 	}
 
 	if haltCommand.Error != nil {
 		r.Log.MainLog.Error().Msg(haltCommand.ErrorResponse.Error.Error())
-		os.Exit(1)
+		
 	}
 
 	logger.Console("Vagrant halt success").Success()
@@ -124,7 +124,7 @@ func (r Runner) serverDestroy(labName string) {
 	if code != 200 {
 		r.Log.MainLog.Error().Msg("Error getting lab info")
 		logger.Console("Error getting lab info").Error()
-		os.Exit(1)
+		
 	}
 
 	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
@@ -132,7 +132,7 @@ func (r Runner) serverDestroy(labName string) {
 	client, err := vagrant.NewVagrantClient(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
-		os.Exit(1)
+		
 	}
 
 	destroyCommand := client.Destroy()
@@ -141,13 +141,13 @@ func (r Runner) serverDestroy(labName string) {
 	if ok != nil {
 		r.Log.MainLog.Error().Msg(ok.Error())
 		logger.Console("Vagrant destroy failed").Error()
-		os.Exit(1)
+		
 	}
 
 	if destroyCommand.Error != nil {
 		r.Log.MainLog.Error().Msg(destroyCommand.ErrorResponse.Error.Error())
 		logger.Console("Vagrant destroy failed").Error()
-		os.Exit(1)
+		
 	}
 
 	logger.Console("Vagrant destroy success").Success()
@@ -160,7 +160,7 @@ func (r Runner) serverCreate(labName string, verbose bool) {
 	if code != 200 {
 		r.Log.MainLog.Error().Msg("Error getting lab info")
 		logger.Console("Error getting lab info").Error()
-		os.Exit(1)
+		
 	}
 
 	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
@@ -168,7 +168,7 @@ func (r Runner) serverCreate(labName string, verbose bool) {
 	client, err := vagrant.NewVagrantClient(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
-		os.Exit(1)
+		
 	}
 
 	// TODO: bring verbose flag from config
@@ -177,18 +177,18 @@ func (r Runner) serverCreate(labName string, verbose bool) {
 	vagrantUp.Verbose = verbose
 	if ok := vagrantUp.Run(); ok != nil {
 		r.Log.MainLog.Error().Msg(ok.Error())
-		os.Exit(1)
+		
 	}
 
 	if vagrantUp.Error != nil {
 		r.Log.MainLog.Error().Msg(vagrantUp.ErrorResponse.Error.Error())
-		os.Exit(1)
+		
 	}
 
 	vmStatus, err := getVMStatus(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
-		os.Exit(1)
+		
 	}
 	for VMName, status := range vmStatus {
 		fmt.Println("    " + VMName + ": " + status)
@@ -204,7 +204,7 @@ func (r Runner) serverSSH(labName string, vmName string, sshCmd bool) {
 	if code != 200 {
 		r.Log.MainLog.Error().Msg("Error getting lab info")
 		logger.Console("Error getting lab info").Error()
-		os.Exit(1)
+		
 	}
 
 	specVM := fmt.Sprintf(r.ConfigPath+"/vagrant/%s", cases.Spec)
@@ -212,18 +212,18 @@ func (r Runner) serverSSH(labName string, vmName string, sshCmd bool) {
 	logger.Console("Checking status of server").Info()
 	if status, err := getVMStatus(specVM); err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
-		os.Exit(1)
+		
 	} else {
 		if status[vmName] != "running" {
 			logger.Console("Server is not running").Error()
-			os.Exit(1)
+			
 		}
 	}
 
 	sshConfig, err := getVMSSHConfig(specVM)
 	if err != nil {
 		r.Log.MainLog.Error().Msg(err.Error())
-		os.Exit(1)
+		
 	}
 
 	if sshCmd {
@@ -326,7 +326,7 @@ for stability use "philo server ssh --command" to show ssh command`,
 			sshCmd, err := cmd.Flags().GetBool("command")
 			if err != nil {
 				fmt.Println(err)
-				os.Exit(1)
+				
 			}
 			runner.serverSSH(args[0], args[1], sshCmd)
 		},
@@ -343,7 +343,7 @@ for stability use "philo server ssh --command" to show ssh command`,
 			verbose, err := cmd.Flags().GetBool("verbose")
 			if err != nil {
 				fmt.Println(err)
-				os.Exit(1)
+				
 			}
 			runner.serverCreate(args[0], verbose)
 		},

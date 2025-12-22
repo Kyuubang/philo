@@ -126,7 +126,7 @@ func max(a, b int) int {
 //	content, err := os.ReadFile("artichoke.md")
 //	if err != nil {
 //		fmt.Println("could not load file:", err)
-//		os.Exit(1)
+//		
 //	}
 //
 //	p := tea.NewProgram(
@@ -137,7 +137,7 @@ func max(a, b int) int {
 //
 //	if _, err := p.Run(); err != nil {
 //		fmt.Println("could not run program:", err)
-//		os.Exit(1)
+//		
 //	}
 //}
 

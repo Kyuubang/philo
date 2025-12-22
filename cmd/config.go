@@ -62,7 +62,7 @@ func initConfig() *viper.Viper {
 		} else {
 			fmt.Println("failed when read $HOME/.philo/config.json file")
 			fmt.Println("failed when read $HOME/.philo/config.json file", "warn")
-			os.Exit(1)
+			
 		}
 	}
 	return mainConfig

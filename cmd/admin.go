@@ -269,7 +269,7 @@ func (r Runner) export(courseId int, classId int) {
 	if err != nil || code != 200 {
 		logger.Console("cant get list of name").Error()
 		fmt.Println(err, code)
-		os.Exit(1)
+		
 	}
 
 	// Write the header row
@@ -308,7 +308,7 @@ func (r Runner) createStudent(userName string) {
 	// check username is valid
 	if !isValidUsername(userName) {
 		logger.Console("Error: username is must alphanumeric and no longer than 16 char").Error()
-		os.Exit(1)
+		
 	}
 
 	logger.Console("create student " + userName).Start()

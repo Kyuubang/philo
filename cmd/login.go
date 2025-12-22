@@ -50,10 +50,10 @@ func (r Runner) login(host string) {
 			switch err {
 			case api.ErrorUserOrPass:
 				logger.Console("Username or password is incorrect").Error()
-				os.Exit(1)
+				
 			case api.ErrorServer:
 				logger.Console("Server error").Error()
-				os.Exit(1)
+				
 			default:
 				fmt.Println(err)
 				logger.Console("Unknown error").Error()
@@ -71,7 +71,7 @@ func (r Runner) login(host string) {
 		err = r.Config.WriteConfig()
 		if err != nil {
 			logger.Console("Error writing config file").Error()
-			os.Exit(1)
+			
 		}
 
 	}
@@ -85,7 +85,7 @@ func loginCommand() (cmd *cobra.Command) {
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) < 1 {
 				logger.Console("Missing server").Error()
-				os.Exit(1)
+				
 			}
 			runner.login(args[0])
 		},

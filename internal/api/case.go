@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"path"
 	"strings"
 	"time"
+
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -42,21 +43,19 @@ type Grade struct {
 }
 
 func getBody(url string) (body []byte, httpCode int) {
-	// set context to cancel if timeout
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
+	// set context with timeout to prevent goroutine leak
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*3)
+	defer cancel()
 
 	// request with context
-	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil) // it will return later 3 sec
+	req, err := http.NewRequestWithContext(ctx, "GET", url, http.NoBody)
+	if err != nil {
+		fmt.Println(err)
+		
+	}
 
 	// setup http client
-	client := &http.Client{}
-
-	// use go routine to setup sleep and cancel
-	go func() {
-		time.Sleep(time.Minute * 3)
-		cancel()
-	}()
+	client := getHTTPClient()
 
 	// do request with setup
 	resp, err := client.Do(req)
@@ -64,17 +63,16 @@ func getBody(url string) (body []byte, httpCode int) {
 	// error raise if timeout
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		
 	}
+	defer resp.Body.Close()
+
 	// read all body it should be json format
 	// error if cant parse to json
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
 	}
-
-	resp.Body.Close()
 
 	return data, resp.StatusCode
 }
@@ -90,7 +88,7 @@ func FileCaseParser(file []byte) (result CaseData, err error) {
 
 // GetCase GitHub file with specific url format
 // https://raw.githubusercontent.com /<repo>/<branch>/<slug>/case.yaml
-func GetCase(repo string, branch string, slug string) (result CaseData, httpCode int) {
+func GetCase(repo, branch, slug string) (result CaseData, httpCode int) {
 	course := strings.Split(slug, "-")[0]
 	repos := strings.Split(repo, "/")
 
@@ -102,7 +100,6 @@ func GetCase(repo string, branch string, slug string) (result CaseData, httpCode
 	err := yaml.Unmarshal(data, &result)
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
 	}
 
 	return result, httpCode
@@ -110,7 +107,7 @@ func GetCase(repo string, branch string, slug string) (result CaseData, httpCode
 
 // GetReadme on specific slug will return byte array
 // name instruction file must be README.md
-func GetReadme(repo string, branch string, slug string) (readme []byte, httpCode int) {
+func GetReadme(repo, branch, slug string) (readme []byte, httpCode int) {
 	course := strings.Split(slug, "-")[0]
 
 	pathUrl := path.Join(repo, branch, course, slug, "README.md")
@@ -123,7 +120,7 @@ func GetReadme(repo string, branch string, slug string) (readme []byte, httpCode
 
 // GetListLab return array of string list available lab
 // request format  https://api.github.com/repos/Kyuubang/philo-sample-case/contents/linux
-func GetListLab(repo string, course string) (labList []string, httpCode int) {
+func GetListLab(repo, course string) (labList []string, httpCode int) {
 	var labs []CaseLabs
 
 	pathUrl := path.Join("repos", repo, "contents", course)
@@ -138,7 +135,6 @@ func GetListLab(repo string, course string) (labList []string, httpCode int) {
 	err := json.Unmarshal(data, &labs)
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
 	}
 
 	for _, lab := range labs {
@@ -164,7 +160,7 @@ func GetListLab(repo string, course string) (labList []string, httpCode int) {
 //	err := json.Unmarshal(data, &result)
 //	if err != nil {
 //		fmt.Println(err)
-//		os.Exit(1)
+//		
 //	}
 //	return result
 //}

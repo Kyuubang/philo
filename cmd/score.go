@@ -2,14 +2,14 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/Kyuubang/philo/internal/api"
 	"github.com/Kyuubang/philo/internal/utils/remote"
 	"github.com/Kyuubang/philo/logger"
 	"github.com/bmatcuk/go-vagrant"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
-	"io/ioutil"
-	"os"
 )
 
 var (
@@ -17,7 +17,7 @@ var (
 	vagrants bool
 )
 
-func score(point int, total int) int {
+func score(point, total int) int {
 	if total == 0 {
 		return 0
 	} else if point > total {
@@ -46,17 +46,17 @@ func (r Runner) scoreCheck(labName string) {
 		if _, err := os.Stat(file); err != nil {
 			if os.IsNotExist(err) {
 				logger.Console("File not found").Error()
-				os.Exit(1)
+				
 			} else {
 				logger.Console("Error opening file").Error()
-				os.Exit(1)
+				
 			}
 		}
 
-		content, err := ioutil.ReadFile(file)
+		content, err := os.ReadFile(file)
 		if err != nil {
 			logger.Console("Error reading file").Error()
-			os.Exit(1)
+			
 		}
 
 		// Parse file
@@ -64,7 +64,7 @@ func (r Runner) scoreCheck(labName string) {
 		if err != nil {
 			logger.Console("Error parsing file").Error()
 			fmt.Println(err)
-			os.Exit(1)
+			
 		}
 
 		caseData = parserCase
@@ -76,15 +76,15 @@ func (r Runner) scoreCheck(labName string) {
 		switch code {
 		case 403:
 			logger.Console("Forbidden!").Error()
-			os.Exit(1)
+			
 		case 404:
 			logger.Console("Lab not found!").Error()
-			os.Exit(1)
+			
 		case 200:
 			logger.Console("Lab found!").Success()
 		default:
 			logger.Console("Unknown error").Error()
-			os.Exit(1)
+			
 		}
 
 		caseData = result
@@ -98,7 +98,7 @@ func (r Runner) scoreCheck(labName string) {
 		SSHConfig, err := getVMSSHConfig(vmSpec)
 		if err != nil {
 			logger.Console("Error getting VM SSH config").Error()
-			os.Exit(1)
+			
 		}
 
 		VMSSHConfig = SSHConfig
@@ -123,7 +123,7 @@ func (r Runner) scoreCheck(labName string) {
 				if r := recover(); r != nil {
 					logger.Console("Error parsing host config").Error()
 					fmt.Println(r)
-					os.Exit(1)
+					
 				}
 			}()
 
@@ -145,7 +145,7 @@ func (r Runner) scoreCheck(labName string) {
 
 	if labName != caseData.Slug {
 		logger.Console("Lab name not match").Error()
-		os.Exit(1)
+		
 	}
 
 	for _, grade := range caseData.Grade {
@@ -205,7 +205,7 @@ func (r Runner) scoreCheck(labName string) {
 		code, err := apis.PushScore(scoreData)
 		if err != nil {
 			logger.Console("Error pushing score").Error()
-			os.Exit(1)
+			
 		}
 
 		switch code {
@@ -232,7 +232,7 @@ func (r Runner) scoreView(labName string) {
 	score, _, err := apis.GetScore(labName)
 	if err != nil {
 		logger.Console("Error getting score").Error()
-		os.Exit(1)
+		
 	}
 
 	logger.Console(fmt.Sprintf("Score: %d/%d", score.Score, 100)).Info()
@@ -252,7 +252,7 @@ func scoreCommand() (cmd *cobra.Command) {
 		Short: "run all case and return score",
 		Long:  `run all case and return score, it grab case.yaml from repo and run it on vm`,
 		Args:  cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			runner.scoreCheck(args[0])
 		},
 	}
@@ -266,7 +266,7 @@ func scoreCommand() (cmd *cobra.Command) {
 		Short: "view score of lab",
 		Long:  `view score of lab if you already run check`,
 		Args:  cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			runner.scoreView(args[0])
 		},
 	}
