@@ -51,7 +51,7 @@ func getBody(url string) (body []byte, httpCode int) {
 	req, err := http.NewRequestWithContext(ctx, "GET", url, http.NoBody)
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		
 	}
 
 	// setup http client
@@ -63,7 +63,7 @@ func getBody(url string) (body []byte, httpCode int) {
 	// error raise if timeout
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		
 	}
 	defer resp.Body.Close()
 
@@ -72,7 +72,6 @@ func getBody(url string) (body []byte, httpCode int) {
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
 	}
 
 	return data, resp.StatusCode
@@ -101,7 +100,6 @@ func GetCase(repo, branch, slug string) (result CaseData, httpCode int) {
 	err := yaml.Unmarshal(data, &result)
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
 	}
 
 	return result, httpCode
@@ -137,7 +135,6 @@ func GetListLab(repo, course string) (labList []string, httpCode int) {
 	err := json.Unmarshal(data, &labs)
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
 	}
 
 	for _, lab := range labs {
@@ -163,7 +160,7 @@ func GetListLab(repo, course string) (labList []string, httpCode int) {
 //	err := json.Unmarshal(data, &result)
 //	if err != nil {
 //		fmt.Println(err)
-//		os.Exit(1)
+//		
 //	}
 //	return result
 //}

@@ -74,11 +74,11 @@ func (e MDModel) helpView() string {
 //	modelPager, err := newExample()
 //	if err != nil {
 //		fmt.Println("Could not initialize Bubble Tea modelPager:", err)
-//		os.Exit(1)
+//		
 //	}
 //
 //	if _, err := tea.NewProgram(modelPager).Run(); err != nil {
 //		fmt.Println("Bummer, there's been an error:", err)
-//		os.Exit(1)
+//		
 //	}
 //}

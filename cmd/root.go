@@ -20,6 +20,6 @@ the shopiea server, which is used to manage your labs and their test cases.`,
 func Execute() {
 	err := philoCmd.Execute()
 	if err != nil {
-		os.Exit(1)
+		
 	}
 }

@@ -21,7 +21,7 @@ func (r Runner) initRun(lab bool, infraRepo string, caseRepo string) {
 	if lab {
 		if os.Getuid() == 0 {
 			logger.Console("You must run initiliaze without root user").Warn()
-			os.Exit(1)
+			
 		}
 		_, err := os.Stat(path.Join(r.ConfigPath, "vagrant"))
 		if os.IsNotExist(err) {
@@ -29,19 +29,19 @@ func (r Runner) initRun(lab bool, infraRepo string, caseRepo string) {
 			if err != nil {
 				logger.Console("unable to create vagrant directory").Error()
 			}
-			os.Exit(1)
+			
 		}
 		if err = api.DownloadRepo(infraRepo, path.Join(r.ConfigPath, "vagrant")); err != nil {
 			r.Log.MainLog.Error().Msgf("unable to download infra repo: %s", err)
 			logger.Console("unable to download infra repo").Error()
-			os.Exit(1)
+			
 		}
 		return
 	}
 
 	if os.Getuid() != 0 {
 		logger.Console("You must run initiliaze with root user").Warn()
-		os.Exit(1)
+		
 	}
 
 	// create logging path -> /var/log/philo
