@@ -252,7 +252,7 @@ func scoreCommand() (cmd *cobra.Command) {
 		Short: "run all case and return score",
 		Long:  `run all case and return score, it grab case.yaml from repo and run it on vm`,
 		Args:  cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			runner.scoreCheck(args[0])
 		},
 	}
@@ -266,7 +266,7 @@ func scoreCommand() (cmd *cobra.Command) {
 		Short: "view score of lab",
 		Long:  `view score of lab if you already run check`,
 		Args:  cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			runner.scoreView(args[0])
 		},
 	}
