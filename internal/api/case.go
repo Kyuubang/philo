@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"io"
 	"net/http"
 	"os"
 	"path"
 	"strings"
 	"time"
+
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -47,7 +48,7 @@ func getBody(url string) (body []byte, httpCode int) {
 	defer cancel()
 
 	// request with context
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, http.NoBody)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -88,7 +89,7 @@ func FileCaseParser(file []byte) (result CaseData, err error) {
 
 // GetCase GitHub file with specific url format
 // https://raw.githubusercontent.com /<repo>/<branch>/<slug>/case.yaml
-func GetCase(repo string, branch string, slug string) (result CaseData, httpCode int) {
+func GetCase(repo, branch, slug string) (result CaseData, httpCode int) {
 	course := strings.Split(slug, "-")[0]
 	repos := strings.Split(repo, "/")
 
@@ -108,7 +109,7 @@ func GetCase(repo string, branch string, slug string) (result CaseData, httpCode
 
 // GetReadme on specific slug will return byte array
 // name instruction file must be README.md
-func GetReadme(repo string, branch string, slug string) (readme []byte, httpCode int) {
+func GetReadme(repo, branch, slug string) (readme []byte, httpCode int) {
 	course := strings.Split(slug, "-")[0]
 
 	pathUrl := path.Join(repo, branch, course, slug, "README.md")
@@ -121,7 +122,7 @@ func GetReadme(repo string, branch string, slug string) (readme []byte, httpCode
 
 // GetListLab return array of string list available lab
 // request format  https://api.github.com/repos/Kyuubang/philo-sample-case/contents/linux
-func GetListLab(repo string, course string) (labList []string, httpCode int) {
+func GetListLab(repo, course string) (labList []string, httpCode int) {
 	var labs []CaseLabs
 
 	pathUrl := path.Join("repos", repo, "contents", course)

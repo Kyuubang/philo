@@ -40,7 +40,7 @@ func getHTTPClient() *http.Client {
 }
 
 // Login create authentication to server
-func Login(host string, username string, password string) (response LoginResponse, err error) {
+func Login(host, username, password string) (response LoginResponse, err error) {
 	var data = LoginData{
 		Username: username,
 		Password: password,
@@ -88,7 +88,7 @@ func Login(host string, username string, password string) (response LoginRespons
 
 func (server CustomServer) GetCourses() (course CoursesResponse, code int, err error) {
 	// create request with function getBody
-	req, err := http.NewRequest("GET", server.Host+"/v1/course", nil)
+	req, err := http.NewRequest("GET", server.Host+"/v1/course", http.NoBody)
 
 	if err != nil {
 		return course, code, err
@@ -126,7 +126,7 @@ func (server CustomServer) GetCourses() (course CoursesResponse, code int, err e
 
 func (server CustomServer) GetLabs(courseId int) (labs LabsResponse, code int, err error) {
 	// create request
-	req, err := http.NewRequest("GET", server.Host+"/v1/labs", nil)
+	req, err := http.NewRequest("GET", server.Host+"/v1/labs", http.NoBody)
 	if err != nil {
 		return labs, code, err
 	}
@@ -192,7 +192,7 @@ func (server CustomServer) PushScore(data ScoreData) (code int, err error) {
 
 func (server CustomServer) GetScore(labName string) (score GetScoreResponse, code int, err error) {
 	// create request
-	req, err := http.NewRequest("GET", server.Host+"/v1/score", nil)
+	req, err := http.NewRequest("GET", server.Host+"/v1/score", http.NoBody)
 
 	q := req.URL.Query()       // Get a copy of the query values.
 	q.Add("lab_name", labName) // Add a new value to the set.
@@ -232,7 +232,7 @@ func (server CustomServer) GetScore(labName string) (score GetScoreResponse, cod
 // GetConfig to get config from server at /v1/info endpoint
 func (server CustomServer) GetConfig() (config map[string]interface{}, code int, err error) {
 	// create request
-	req, err := http.NewRequest("GET", server.Host+"/v1/info", nil)
+	req, err := http.NewRequest("GET", server.Host+"/v1/info", http.NoBody)
 	if err != nil {
 		return config, -1, err
 	}

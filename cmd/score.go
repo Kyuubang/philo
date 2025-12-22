@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/Kyuubang/philo/internal/api"
 	"github.com/Kyuubang/philo/internal/utils/remote"
 	"github.com/Kyuubang/philo/logger"
 	"github.com/bmatcuk/go-vagrant"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
-	"os"
 )
 
 var (
@@ -16,7 +17,7 @@ var (
 	vagrants bool
 )
 
-func score(point int, total int) int {
+func score(point, total int) int {
 	if total == 0 {
 		return 0
 	} else if point > total {
